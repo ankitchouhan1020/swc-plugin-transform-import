@@ -9,6 +9,14 @@
   "files": [
     "lib"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankitchouhan1020/swc-plugin-transform-import.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ankitchouhan1020/swc-plugin-transform-import/issues"
+  },
+  "homepage": "https://github.com/ankitchouhan1020/swc-plugin-transform-import#readme",
   "author": "Ankit Chouhan",
   "license": "ISC",
   "devDependencies": {
