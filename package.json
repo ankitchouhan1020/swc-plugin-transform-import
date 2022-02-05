@@ -1,11 +1,14 @@
 {
   "name": "swc-plugin-transform-import",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "swc plugin for transforming import path to optimize bundle size",
   "main": "lib/index.js",
   "scripts": {
     "test": "tsc && mocha"
   },
+  "files": [
+    "lib"
+  ],
   "author": "Ankit Chouhan",
   "license": "ISC",
   "devDependencies": {
