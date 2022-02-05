@@ -1,9 +1,17 @@
 # swc-plugin-transform-import
 Inspired from [babel-plugin-transform-imports](https://www.npmjs.com/package/babel-plugin-transform-imports)
 
+## Installation
+
+```bash
+npm i -D swc-plugin-transform-import
+```
+
 ## Uses with webpack-config
 ```javascript
 // webpack.config.js
+
+const PluginTransformImport = require('swc-plugin-transform-import');
 
 module: {
     rules: [
