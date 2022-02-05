@@ -1,6 +1,32 @@
 # swc-plugin-transform-import
 Inspired from [babel-plugin-transform-imports](https://www.npmjs.com/package/babel-plugin-transform-imports)
 
+## Uses with webpack-config
+```javascript
+// webpack.config.js
+
+module: {
+    rules: [
+      {
+        test: /\.(ts|tsx|js|jsx)$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: 'swc-loader',
+          options: {
+            plugin: (m) => new PluginTransformImport.default({
+              "lodash": {
+                "transform": "lodash/${member}",
+                "preventFullImport": true
+              }
+            }).visitProgram(m),
+          }
+        }]
+      },
+    ],
+};
+
+```
+
 
 ```javascript
 import { Row, Grid as MyGrid } from 'react-bootstrap';
