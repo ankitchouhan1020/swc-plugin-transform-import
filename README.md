@@ -11,7 +11,7 @@ npm i -D swc-plugin-transform-import
 ```javascript
 // webpack.config.js
 
-const PluginTransformImport = require('swc-plugin-transform-import');
+const PluginTransformImport = require('swc-plugin-transform-import').default;
 
 module: {
     rules: [
@@ -21,7 +21,7 @@ module: {
         use: [{
           loader: 'swc-loader',
           options: {
-            plugin: (m) => new PluginTransformImport.default({
+            plugin: (m) => new PluginTransformImport({
               "lodash": {
                 "transform": "lodash/${member}",
                 "preventFullImport": true
