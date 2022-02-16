@@ -17,6 +17,10 @@ export interface SubOpts {
      * When set to true, will preserve import { X } syntax instead of converting to import X.
      */
     skipDefaultConversion: boolean;
+    /**
+     * When set to true, will add side effect import from transformed path concatenated with `/style`
+     */
+    style: boolean;
 }
 
 export interface Opts {
@@ -26,6 +30,7 @@ export interface Opts {
 const DEFAULT_OPTS: Omit<SubOpts, 'transform'> = {
     preventFullImport: false,
     skipDefaultConversion: false,
+    style: false,
 }
 
 function barf(msg: String) {
@@ -98,7 +103,7 @@ class PluginTransformImport extends Visitor {
             // node.specifiers is an array of ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier
             const { source, specifiers } = node;
 
-            const { preventFullImport, skipDefaultConversion, transform } = opts[source.value];
+            const { preventFullImport, skipDefaultConversion, transform, style } = opts[source.value];
             const isDefaultImportExist = specifiers.some(specifier => specifier.type === 'ImportDefaultSpecifier');
 
             //      import * as name from 'module'; (ImportNamespaceSpecifier)
@@ -133,17 +138,32 @@ class PluginTransformImport extends Visitor {
                         }),
                     }
 
+                    const value = transformImportPath(transform, actualImportVariable || '');
                     const copyNode = {
                         ...node,
                         source: {
                             ...source,
-                            value: transformImportPath(transform, actualImportVariable || ''),
+                            value,
                         },
                         specifiers: [newSpecifier],
                         type: "ImportDeclaration",
                     } as ImportDeclaration;
 
                     transformedNodes.push(copyNode);
+
+                    if (style) {                        
+                        const styleNode = {
+                            ...node,
+                            source: {
+                                ...source,
+                                value: `${value}/style`,
+                            },
+                            specifiers: [],
+                            type: "ImportDeclaration",
+                        } as ImportDeclaration;
+                        
+                        transformedNodes.push(styleNode);
+                    }
 
                 } else if (type === 'ImportDefaultSpecifier') {
                     const nameImportsFilteredNode = {
