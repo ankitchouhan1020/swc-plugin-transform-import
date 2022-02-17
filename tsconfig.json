@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "outDir": "lib"
+    "outDir": "lib",
+    "target": "es6"
   }
 }
