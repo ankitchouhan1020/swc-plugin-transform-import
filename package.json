@@ -1,5 +1,5 @@
 {
-  "name": "@myklt/swc-plugin-transform-import",
+  "name": "swc-plugin-transform-import",
   "version": "0.0.2",
   "description": "swc plugin for transforming import path to optimize bundle size",
   "main": "lib/index.js",
