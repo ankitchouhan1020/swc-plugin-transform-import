@@ -137,7 +137,7 @@ describe('PluginImport', function () {
     import { Row, Grid as MyGrid } from 'react-bootstrap';
     `.trimStart().replace(/^\s+/mg, ''));
   });
-  
+
   it('should import style', function () {
     const opts = {
       "antd": {
@@ -157,6 +157,29 @@ describe('PluginImport', function () {
     assert.equal(output.code, `
       import Button from 'antd/es/Button';
       import 'antd/es/Button/style';
+    `.trimStart().replace(/^\s+/mg, ''));
+  });
+
+  it('should import style with styleTransform', function () {
+
+    const opts = {
+      "antd": {
+        "transform": "antd/es/${member}",
+        "styleTransform": (transformedPath) => `${transformedPath}/style/css.js`
+      },
+    }
+
+    const output = transformSync(`
+      import { Breadcrumb } from 'antd';
+    `, {
+      plugin(m) {
+        return new PluginImport.default(opts).visitProgram(m);
+      },
+    });
+
+    assert.equal(output.code, `
+      import Breadcrumb from 'antd/es/Breadcrumb';
+      import 'antd/es/Breadcrumb/style/css.js';
     `.trimStart().replace(/^\s+/mg, ''));
   });
 });

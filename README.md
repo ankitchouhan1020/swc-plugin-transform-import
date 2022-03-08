@@ -136,3 +136,4 @@ module.exports = function(importName) {
 | `preventFullImport` | `boolean` | no | `false` | Whether or not to throw when an import is encountered which would cause the entire module to be imported. |
 | `skipDefaultConversion` | `boolean` | no | `false` | When set to true, will preserve `import { X }` syntax instead of converting to `import X`. |
 | `style` | `boolean` | no | `false` | When set to true, will add side effect import of transformed path concatenated with `/style`. |
+| `styleTransform` | `function` | no | `false` | Can be optional, a function received transformed path argument, further tuning the style import path. |
