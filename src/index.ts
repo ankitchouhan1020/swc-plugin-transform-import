@@ -171,7 +171,7 @@ class PluginTransformImport extends Visitor {
                         transformedNodes.push(styleNode);
                     }
 
-                    if (styleTransform) {
+                    if (styleTransform && typeof styleTransform === 'function') {
                         const styleNode = {
                             ...node,
                             source: {
