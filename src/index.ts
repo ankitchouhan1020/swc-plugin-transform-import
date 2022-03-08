@@ -9,31 +9,32 @@ export interface SubOpts {
      * The library name to use instead of the one specified in the import statement.
      */
     transform: string;
+
     /**
      * Whether or not to throw when an import is encountered which would cause the entire module to be imported.
      */
-    preventFullImport: boolean;
+    preventFullImport?: boolean;
+
     /**
      * When set to true, will preserve import { X } syntax instead of converting to import X.
      */
-    skipDefaultConversion: boolean;
+    skipDefaultConversion?: boolean;
+
     /**
+     * Add side effect style module import, either css stylesheet or js/css module
+     * Boolean mode:
      * When set to true, will add side effect import from transformed path concatenated with `/style`
+     * Function mode:
+     * When set as a function, receive an argument as the transformed path, return tramsformed style module path
      */
-    style: boolean;
-
-    /**
-     * Can be optional, a function received transformed path argument, further tuning the style import path
-     */
-    styleTransform?: (transformedPath: string) => string
-
+    style?: boolean | ((transformedPath: string) => string);
 }
 
 export interface Opts {
     [key: string]: SubOpts;
 }
 
-const DEFAULT_OPTS: Omit<SubOpts, 'transform' | 'styleTransform'> = {
+const DEFAULT_OPTS: Omit<SubOpts, 'transform'> = {
     preventFullImport: false,
     skipDefaultConversion: false,
     style: false,
@@ -109,7 +110,7 @@ class PluginTransformImport extends Visitor {
             // node.specifiers is an array of ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier
             const { source, specifiers } = node;
 
-            const { preventFullImport, skipDefaultConversion, transform, style, styleTransform } = opts[source.value];
+            const { preventFullImport, skipDefaultConversion, transform, style } = opts[source.value];
             const isDefaultImportExist = specifiers.some(specifier => specifier.type === 'ImportDefaultSpecifier');
 
             //      import * as name from 'module'; (ImportNamespaceSpecifier)
@@ -158,25 +159,13 @@ class PluginTransformImport extends Visitor {
                     transformedNodes.push(copyNode);
 
                     if (style) {
+                        const nodeValue = typeof style === 'function' ? style(value) : `${value}/style`;
+
                         const styleNode = {
                             ...node,
                             source: {
                                 ...source,
-                                value: `${value}/style`,
-                            },
-                            specifiers: [],
-                            type: "ImportDeclaration",
-                        } as ImportDeclaration;
-
-                        transformedNodes.push(styleNode);
-                    }
-
-                    if (styleTransform && typeof styleTransform === 'function') {
-                        const styleNode = {
-                            ...node,
-                            source: {
-                                ...source,
-                                value: styleTransform(value)
+                                value: nodeValue,
                             },
                             specifiers: [],
                             type: "ImportDeclaration",

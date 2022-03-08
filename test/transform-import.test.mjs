@@ -2,7 +2,6 @@ import { strict as assert } from 'assert';
 import expect from 'expect';
 
 import { transformSync } from '@swc/core';
-
 import PluginImport from '../lib/index.js';
 
 describe('PluginImport', function () {
@@ -138,48 +137,49 @@ describe('PluginImport', function () {
     `.trimStart().replace(/^\s+/mg, ''));
   });
 
-  it('should import style', function () {
-    const opts = {
-      "antd": {
-        "transform": "antd/es/${member}",
-        "style": true
-      },
-    }
+  describe('should import style', function () {
+    it('default transform', function () {
+      const opts = {
+        "antd": {
+          "transform": "antd/es/${member}",
+          "style": true
+        },
+      }
 
-    const output = transformSync(`
-      import { Button } from 'antd';
-    `, {
-      plugin(m) {
-        return new PluginImport.default(opts).visitProgram(m);
-      },
+      const output = transformSync(`
+        import { Button } from 'antd';
+      `, {
+        plugin(m) {
+          return new PluginImport.default(opts).visitProgram(m);
+        },
+      });
+
+      assert.equal(output.code, `
+        import Button from 'antd/es/Button';
+        import 'antd/es/Button/style';
+      `.trimStart().replace(/^\s+/mg, ''));
     });
 
-    assert.equal(output.code, `
-      import Button from 'antd/es/Button';
-      import 'antd/es/Button/style';
-    `.trimStart().replace(/^\s+/mg, ''));
-  });
+    it('customized transform', function () {
+      const opts = {
+        "antd": {
+          "transform": "antd/es/${member}",
+          "style": (transformedPath) => `${transformedPath}/style/css.js`
+        },
+      }
 
-  it('should import style with styleTransform', function () {
+      const output = transformSync(`
+        import { Breadcrumb } from 'antd';
+      `, {
+        plugin(m) {
+          return new PluginImport.default(opts).visitProgram(m);
+        },
+      });
 
-    const opts = {
-      "antd": {
-        "transform": "antd/es/${member}",
-        "styleTransform": (transformedPath) => `${transformedPath}/style/css.js`
-      },
-    }
-
-    const output = transformSync(`
-      import { Breadcrumb } from 'antd';
-    `, {
-      plugin(m) {
-        return new PluginImport.default(opts).visitProgram(m);
-      },
-    });
-
-    assert.equal(output.code, `
-      import Breadcrumb from 'antd/es/Breadcrumb';
-      import 'antd/es/Breadcrumb/style/css.js';
-    `.trimStart().replace(/^\s+/mg, ''));
-  });
+      assert.equal(output.code, `
+        import Breadcrumb from 'antd/es/Breadcrumb';
+        import 'antd/es/Breadcrumb/style/css.js';
+      `.trimStart().replace(/^\s+/mg, ''));
+    })
+  })
 });
