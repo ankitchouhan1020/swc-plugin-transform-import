@@ -45,8 +45,8 @@ function barf(msg: String) {
 }
 
 
-function transformImportPath(transformOption: any, importName: string) {
-    if (!transformOption) return;
+function transformImportPath(transformOption: any, importName: string): string {
+    if (!transformOption) return '';
 
     const isFunction = typeof transformOption === 'function';
 
