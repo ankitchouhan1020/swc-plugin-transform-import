@@ -159,7 +159,7 @@ class PluginTransformImport extends Visitor {
                     transformedNodes.push(copyNode);
 
                     if (style) {
-                        const nodeValue = typeof style === 'function' ? style(value) : `${value}/style`;
+                        const nodeValue: string = typeof style === 'function' ? style(value) : `${value}/style`;
 
                         const styleNode = {
                             ...node,
