@@ -1,6 +1,6 @@
 {
   "name": "swc-plugin-transform-import",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "swc plugin for transforming import path to optimize bundle size",
   "main": "lib/index.js",
   "scripts": {
