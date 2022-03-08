@@ -9,18 +9,25 @@ export interface SubOpts {
      * The library name to use instead of the one specified in the import statement.
      */
     transform: string;
+
     /**
      * Whether or not to throw when an import is encountered which would cause the entire module to be imported.
      */
-    preventFullImport: boolean;
+    preventFullImport?: boolean;
+
     /**
      * When set to true, will preserve import { X } syntax instead of converting to import X.
      */
-    skipDefaultConversion: boolean;
+    skipDefaultConversion?: boolean;
+
     /**
+     * Add side effect style module import, either css stylesheet or js/css module
+     * Boolean mode:
      * When set to true, will add side effect import from transformed path concatenated with `/style`
+     * Function mode:
+     * When set as a function, receive an argument as the transformed path, return tramsformed style module path
      */
-    style: boolean;
+    style?: boolean | ((transformedPath: string) => string);
 }
 
 export interface Opts {
@@ -38,8 +45,8 @@ function barf(msg: String) {
 }
 
 
-function transformImportPath(transformOption: any, importName: string) {
-    if (!transformOption) return;
+function transformImportPath(transformOption: any, importName: string): string {
+    if (!transformOption) return '';
 
     const isFunction = typeof transformOption === 'function';
 
@@ -151,17 +158,17 @@ class PluginTransformImport extends Visitor {
 
                     transformedNodes.push(copyNode);
 
-                    if (style) {                        
+                    if (style) {
                         const styleNode = {
                             ...node,
                             source: {
                                 ...source,
-                                value: `${value}/style`,
+                                value: typeof style === 'function' ? style(value) : `${value}/style`,
                             },
                             specifiers: [],
                             type: "ImportDeclaration",
                         } as ImportDeclaration;
-                        
+
                         transformedNodes.push(styleNode);
                     }
 
