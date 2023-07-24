@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "description": "swc plugin for transforming import path to optimize bundle size",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "tsc && mocha"
   },
